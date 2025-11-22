@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traslado de Productos</title>
+  <link rel="icon" href="https://github.com/rimedhn/repuestosgenesis/blob/main/Repuestos%20Genesis%20Logo.jpg?raw=true" type="image/x-icon">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fff; }
+    .traslado-carta {
+      max-width: 420px;
+      min-width: 240px;
+      margin: auto;
+      background: #fff;
+      padding: 10px 12px;
+      box-sizing: border-box;
+      border: 1px solid #eee;
+    }
+    .encabezado-negocio {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .encabezado-negocio .logo {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 4px;
+      display: inline-block;
+    }
+    .encabezado-negocio .nombre-negocio {
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .titulo-traslado {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      margin-top: 2px;
+    }
+    .datos-generales, .detalle-table, .resumen-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 9px;
+      font-size: 14px;
+    }
+    .datos-generales td {
+      padding: 2px 4px;
+      border: none;
+      font-size: 14px;
+      vertical-align: top;
+    }
+    .detalle-table th, .detalle-table td {
+      padding: 2px 3px;
+      border: 1px solid #777;
+      vertical-align: top;
+      text-align: center;
+      font-size: 14px;
+    }
+    .detalle-table th {
+      background: #f3f3f3;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .resumen-table td {
+      border: none;
+      font-size: 15px;
+      padding: 2px 6px;
+    }
+    @media print {
+      body, .traslado-carta {
+        background: #fff !important;
+        box-shadow: none;
+        border: none;
+      }
+      .traslado-carta {
+        padding: 2px !important;
+        max-width: unset !important;
+        min-width: unset !important;
+        width: 100% !important;
+      }
+      .encabezado-negocio .logo { width: 55px; height: 55px; }
+      .titulo-traslado { font-size: 16px; }
+      .detalle-table th, .detalle-table td {
+        font-size: 11px;
+        padding: 1px 2px;
+      }
+      .resumen-table td {
+        font-size: 12px;
+        padding: 1px 3px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="traslado-carta">
+    <div class="encabezado-negocio">
+      <img src="https://github.com/rimedhn/repuestosgenesis/blob/main/Repuestos%20Genesis%20Logo.jpg?raw=true" class="logo" alt="Logo"/>
+      <div class="nombre-negocio">Repuestos Genesis</div>
+      <div style="font-size:13px;">+504 9999-9999 &nbsp;|&nbsp; repuestosgenesis@gmail.com</div>
+    </div>
+    <div class="titulo-traslado">Traslado de Productos</div>
+
+    <table class="datos-generales" id="datosGenerales">
+      <!-- Rellenar con JS -->
+    </table>
+
+    <table class="detalle-table" id="detalleTable">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Descripción</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Importe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rellenar con JS -->
+      </tbody>
+    </table>
+
+    <table class="resumen-table">
+      <tr>
+        <td><b>Total productos:</b></td>
+        <td id="totalProductos"></td>
+      </tr>
+      <tr>
+        <td><b>Importe total:</b></td>
+        <td id="importeTotal"></td>
+      </tr>
+    </table>
+  </div>
+  <script>
+    // URLs opensheet para el documento de Traslados y Traslado
+    const docId = "1U-GCBT2vw1R4Uvy08knqEuC7V_1KckjgopcSfhzAolk";
+    const urlTraslados = `https://opensheet.elk.sh/${docId}/Traslados`;
+    const urlTraslado = `https://opensheet.elk.sh/${docId}/Traslado`;
+
+    function getQueryParam(param) {
+      var urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function formatCurrency(num) {
+      if (!num || isNaN(num)) return "L 0.00";
+      return "L " + Number(num).toLocaleString('es-HN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    function cargaTraslado() {
+      const idTraslado = getQueryParam('id_traslado');
+      if (!idTraslado) {
+        alert("Falta parámetro id_traslado en la URL");
+        return;
+      }
+      Promise.all([
+        fetch(urlTraslados).then(r => r.json()),
+        fetch(urlTraslado).then(r => r.json())
+      ]).then(([traslados, lineas]) => {
+        const trasladoGen = traslados.find(r => r.IdTraslado == idTraslado);
+        if (!trasladoGen) {
+          alert("No se encontró el traslado.");
+          return;
+        }
+        // Mostrar datos generales
+        const datosGenHtml = `
+          <tr>
+            <td><b>ID Traslado:</b></td>
+            <td>${trasladoGen.IdTraslado}</td>
+          </tr>
+          <tr>
+            <td><b>Origen:</b></td>
+            <td>${trasladoGen.NombreOrigen}</td>
+          </tr>
+          <tr>
+            <td><b>Destino:</b></td>
+            <td>${trasladoGen.NombreDestino}</td>
+          </tr>
+          <tr>
+            <td><b>Fecha y Hora:</b></td>
+            <td>${trasladoGen["Fecha hora"]}</td>
+          </tr>
+          <tr>
+            <td><b>Usuario:</b></td>
+            <td>${trasladoGen.Usuario}</td>
+          </tr>
+          <tr>
+            <td><b>Estatus:</b></td>
+            <td>${trasladoGen.Estatus}</td>
+          </tr>
+        `;
+        document.getElementById("datosGenerales").innerHTML = datosGenHtml;
+
+        // Detalle de productos
+        const detalle = lineas.filter(l => l.Traslado == idTraslado);
+        const tbody = document.getElementById("detalleTable").querySelector("tbody");
+        tbody.innerHTML = "";
+        let totalProductos = 0, totalImporte = 0;
+        detalle.forEach((l, idx) => {
+          const cantidad = parseFloat(l.Cantidad) || 0;
+          const precio = parseFloat(l.Precio) || 0;
+          const importe = cantidad * precio;
+          totalProductos += cantidad;
+          totalImporte += importe;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>${l.Descripcion || "(Sin descripción)"}</td>
+            <td>${cantidad}</td>
+            <td>${formatCurrency(precio)}</td>
+            <td>${formatCurrency(importe)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+        document.getElementById("totalProductos").textContent = totalProductos;
+        document.getElementById("importeTotal").textContent = formatCurrency(totalImporte);
+
+        // Print auto (opcional, descomenta para imprimir automáticamente al cargar)
+        // window.print();
+      }).catch(err => {
+        alert("Error al cargar los datos: " + err);
+      });
+    }
+    window.onload = cargaTraslado;
+  </script>
+</body>
+</html>
