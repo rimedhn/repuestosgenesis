@@ -153,11 +153,13 @@
         border-left:none;border-right:none;
         background:none !important;
       }
-      .detalle-table .desc-row {
+      .detalle-table .desc-row td {
         font-weight: bold;
-        width: 100%; border: none; font-size:12px; display:table-row; color:#222;background:none !important;
-        padding-bottom:0;
+        width: 100%; border: none; font-size:12px; color:#222;background:none !important;
+        padding-bottom:0; text-align:left;
+        display: table-cell;
       }
+      .detalle-table .desc-row {display:table-row;}
       .detalle-table .data-row td {padding-bottom:2px;}
       .detalle-table .data-row { border-bottom: 1px dashed #ccc; }
       .detalle-table .desc-th, .detalle-table .cell-desc {display:none;}
@@ -277,7 +279,7 @@
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
       if (isTicketView()) {
-        // Encabezado: No | Cantidad | Precio | Importe (sin descripción), pero la descripción debe verse en una fila superior a cada línea
+        // En ticket, mostrar la descripción en la primera fila antes de los datos alineados
         detalle.forEach((l, idx) => {
           const cantidad = parseFloat(l.Cantidad) || 0;
           const precio = parseFloat(l.Precio) || 0;
@@ -292,7 +294,7 @@
           trDatos.className = "data-row";
           trDatos.innerHTML = `
             <td>${idx + 1}</td>
-            <td class="cell-desc"></td>
+            <td></td>
             <td>${cantidad}</td>
             <td>${formatCurrency(precio)}</td>
             <td>${formatCurrency(importe)}</td>`;
