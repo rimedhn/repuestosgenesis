@@ -129,7 +129,37 @@
       padding: 2px 6px;
       text-align: center;
     }
-
+    /* --- NUEVO: estilos para firmas --- */
+    .firmas-section {
+      width: 100%;
+      margin-top: 32px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      gap: 35%;
+    }
+    .firma-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 170px;
+      font-size: 15px;
+    }
+    .firma-linea {
+      margin-bottom: 3px;
+      width: 150px;
+      border-bottom: 1.5px solid #444;
+      height: 24px;
+      /* puede ajustarse el alto si se prefiere mayor espacio */
+    }
+    .firma-label {
+      margin-top: 2px;
+      font-size: 14px;
+      color: #222;
+      font-weight: bold;
+      text-align: center;
+      letter-spacing: 1px;
+    }
     @media (max-width: 80mm) {
       .traslado-carta {
         max-width: 80mm !important;
@@ -194,6 +224,11 @@
       .resumen-final td { font-size:13px;}
       .footer-table td {font-size:13px;}
       .barcode-box { margin-top: 5px;}
+      /* --- Responsive firmas y espacio --- */
+      .firmas-section { flex-direction: column; gap: 18px; margin-top: 18px;}
+      .firma-container { min-width:120px; }
+      .firma-linea { width: 100px; height: 18px;}
+      .firma-label { font-size:12px;}
     }
     @media print {
       .traslado-carta {width:8.2in;max-width:8.2in;min-width:210mm;padding:7px 8px 10px 8px;}
@@ -208,6 +243,10 @@
       .detalle-table th {font-size: 11px;}
       .detalle-table td.desc-td {font-size: 12px; text-align:left !important;}
       .detalle-table td.precio-td, .detalle-table td.importe-td {font-size: 12px; text-align:right !important;}
+      /* --- Firmas impresión --- */
+      .firmas-section {margin-top: 34px;}
+      .firma-linea {height: 23px;}
+      .firma-label {font-size: 13px;}
     }
     @media print and (max-width: 80mm) {
       body, html { margin: 0 !important; padding: 0 !important; }
@@ -265,6 +304,17 @@
         <td id="footerUsuario"></td>
       </tr>
     </table>
+    <!-- LÍNEAS DE FIRMA -->
+    <div class="firmas-section">
+      <div class="firma-container">
+        <div class="firma-linea"></div>
+        <div class="firma-label">Firma quien envía</div>
+      </div>
+      <div class="firma-container">
+        <div class="firma-linea"></div>
+        <div class="firma-label">Firma quien recibe</div>
+      </div>
+    </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script>
@@ -391,3 +441,4 @@
   </script>
 </body>
 </html>
+
