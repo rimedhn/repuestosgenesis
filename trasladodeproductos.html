@@ -62,6 +62,10 @@
       margin-bottom: 8px;
       margin-top: 2px;
     }
+    .datos-negocio {
+      font-size: 14px;
+      line-height: 1.5;
+    }
     .datos-generales, .detalle-table, .footer-table {
       width: 100%;
       border-collapse: collapse;
@@ -78,13 +82,24 @@
       padding: 2px 3px;
       border: 1px solid #777;
       vertical-align: top;
-      text-align: center;
       font-size: 14px;
     }
     .detalle-table th {
       background: #f3f3f3;
       font-weight: bold;
       font-size: 13px;
+      text-align: center;
+    }
+    .detalle-table td.desc-td {
+      text-align: left !important;
+    }
+    .detalle-table td.precio-td,
+    .detalle-table td.importe-td {
+      text-align: right !important;
+    }
+    .detalle-table td.cant-td,
+    .detalle-table td.no-td {
+      text-align: center;
     }
     .resumen-final {
       width: 100%;
@@ -115,7 +130,6 @@
       text-align: center;
     }
 
-    /* --------- TICKET MODE: <=80mm ---------- */
     @media (max-width: 80mm) {
       .traslado-carta {
         max-width: 80mm !important;
@@ -130,9 +144,8 @@
         margin-bottom: 5px;
       }
       .encabezado-negocio .logo { width: 90px; height: 90px; margin-bottom: 5px;}
-      .datos-negocio { text-align: center; }
+      .datos-negocio { text-align: center; font-size: 13px; }
       .nombre-negocio { font-size: 19px;}
-      .datos-negocio { font-size: 13px;}
       .titulo-traslado { font-size:15px;}
       .detalle-table { width:100%; margin-bottom:5px; table-layout:fixed; }
       .detalle-table thead tr th { 
@@ -141,9 +154,8 @@
         border-left:none;
         border-right:none;
         background:#f3f3f3;
-        text-align:left;
+        text-align:center;
       }
-      /* Campo NO y CANTIDAD menos espacio */
       .detalle-table thead tr th.no-th, .detalle-table tbody td.no-td { width: 8%; }
       .detalle-table thead tr th.desc-th, .detalle-table tbody td.desc-td { width: 37%; }
       .detalle-table thead tr th.cant-th, .detalle-table tbody td.cant-td { width: 13%; }
@@ -160,9 +172,8 @@
         background:none !important;
         word-break: break-word;
         overflow-wrap: break-word;
-        text-align:left;
       }
-      .detalle-table .desc-td {
+      .detalle-table td.desc-td {
         font-weight: bold;
         font-size:12px;
         color:#222;
@@ -170,18 +181,20 @@
         padding-top:4px;
         background:none !important;
         border:none !important;
-        text-align:left;
+        text-align:left !important;
       }
-      /* Baja AÚN MÁS el tamaño de fuente SOLO para datos precio/importe */
-      .detalle-table .precio-td,
-      .detalle-table .importe-td {
+      .detalle-table td.precio-td,
+      .detalle-table td.importe-td {
         font-size: 9px;
+        text-align:right !important;
+      }
+      .detalle-table td.cant-td, .detalle-table td.no-td {
+        text-align:center;
       }
       .resumen-final td { font-size:13px;}
       .footer-table td {font-size:13px;}
       .barcode-box { margin-top: 5px;}
     }
-    /* --------- PRINT MODE carta ----------- */
     @media print {
       .traslado-carta {width:8.2in;max-width:8.2in;min-width:210mm;padding:7px 8px 10px 8px;}
       .encabezado-row {margin-bottom:8px;}
@@ -192,8 +205,10 @@
       .datos-generales td,
       .footer-table td {font-size:12px;}
       .resumen-final td {font-size:14px;}
+      .detalle-table th {font-size: 11px;}
+      .detalle-table td.desc-td {font-size: 12px; text-align:left !important;}
+      .detalle-table td.precio-td, .detalle-table td.importe-td {font-size: 12px; text-align:right !important;}
     }
-    /* PRINT MODE: margins for ticket */
     @media print and (max-width: 80mm) {
       body, html { margin: 0 !important; padding: 0 !important; }
       @page { size: 80mm auto; margin: 2mm !important; }
@@ -210,6 +225,8 @@
       <div class="datos-negocio">
         <div class="nombre-negocio">Repuestos Genesis</div>
         <div>+504 9999-9999 &nbsp;|&nbsp; repuestosgenesis@gmail.com</div>
+        <div>repuestosgenesismasica@gmail.com</div>
+        <div>+504 8780-8352 &nbsp;|&nbsp; +504 9596-8152</div>
       </div>
     </div>
     <div class="titulo-traslado">Traslado de Productos</div>
@@ -279,55 +296,40 @@
     function renderDetalle(detalle) {
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
-      if (isTicketView()) {
-        // Muestra encabezados en thead; datos alineados debajo
-        detalle.forEach((l, idx) => {
-          var tr = document.createElement("tr");
-          // No
-          var tdNo = document.createElement("td");
-          tdNo.className = "no-td";
-          tdNo.textContent = idx + 1;
-          // Descripción ocupa ancho
-          var tdDesc = document.createElement("td");
-          tdDesc.className = "desc-td";
-          tdDesc.textContent = l.Descripcion || "(Sin descripción)";
-          // Cantidad
-          var tdCantidad = document.createElement("td");
-          tdCantidad.className = "cant-td";
-          tdCantidad.textContent = parseFloat(l.Cantidad) || 0;
-          // Precio
-          var tdPrecio = document.createElement("td");
-          tdPrecio.className = "precio-td";
-          tdPrecio.textContent = formatCurrency(parseFloat(l.Precio) || 0);
-          // Importe
-          var cantidad = parseFloat(l.Cantidad) || 0;
-          var precio = parseFloat(l.Precio) || 0;
-          var tdImporte = document.createElement("td");
-          tdImporte.className = "importe-td";
-          tdImporte.textContent = formatCurrency(cantidad * precio);
+      // SIEMPRE: descripción alineada izquierda, precio e importe a derecha
+      detalle.forEach((l, idx) => {
+        var tr = document.createElement("tr");
+        // No
+        var tdNo = document.createElement("td");
+        tdNo.className = "no-td";
+        tdNo.textContent = idx + 1;
+        // Descripción
+        var tdDesc = document.createElement("td");
+        tdDesc.className = "desc-td";
+        tdDesc.textContent = l.Descripcion || "(Sin descripción)";
+        // Cantidad
+        var tdCantidad = document.createElement("td");
+        tdCantidad.className = "cant-td";
+        tdCantidad.textContent = parseFloat(l.Cantidad) || 0;
+        // Precio
+        var tdPrecio = document.createElement("td");
+        tdPrecio.className = "precio-td";
+        tdPrecio.textContent = formatCurrency(parseFloat(l.Precio) || 0);
+        // Importe
+        var cantidad = parseFloat(l.Cantidad) || 0;
+        var precio = parseFloat(l.Precio) || 0;
+        var tdImporte = document.createElement("td");
+        tdImporte.className = "importe-td";
+        tdImporte.textContent = formatCurrency(cantidad * precio);
 
-          tr.appendChild(tdNo);
-          tr.appendChild(tdDesc);
-          tr.appendChild(tdCantidad);
-          tr.appendChild(tdPrecio);
-          tr.appendChild(tdImporte);
+        tr.appendChild(tdNo);
+        tr.appendChild(tdDesc);
+        tr.appendChild(tdCantidad);
+        tr.appendChild(tdPrecio);
+        tr.appendChild(tdImporte);
 
-          tbody.appendChild(tr);
-        });
-      } else {
-        // Vista mayor: tabla tradicional
-        detalle.forEach((l, idx) => {
-          var tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${idx + 1}</td>
-            <td class="cell-desc">${l.Descripcion || "(Sin descripción)"}</td>
-            <td>${parseFloat(l.Cantidad) || 0}</td>
-            <td>${formatCurrency(parseFloat(l.Precio) || 0)}</td>
-            <td>${formatCurrency((parseFloat(l.Cantidad) || 0) * (parseFloat(l.Precio) || 0))}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      }
+        tbody.appendChild(tr);
+      });
     }
 
     function cargaTraslado() {
