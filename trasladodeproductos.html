@@ -177,6 +177,21 @@
       .footer-table td {font-size:12px;}
       .resumen-final td {font-size:14px;}
     }
+    /* PRINT MODE: margins for ticket */
+    @media print and (max-width: 80mm) {
+      body, html {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      @page {
+        size: 80mm auto;
+        margin: 2mm !important;
+      }
+      .traslado-carta {
+        margin: 0 !important;
+        padding: 2mm !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -262,15 +277,15 @@
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
       if (isTicketView()) {
-        // Encabezado: No | Cantidad | Precio | Importe (sin descripción)
+        // Encabezado: No | Cantidad | Precio | Importe (sin descripción), pero la descripción debe verse en una fila superior a cada línea
         detalle.forEach((l, idx) => {
           const cantidad = parseFloat(l.Cantidad) || 0;
           const precio = parseFloat(l.Precio) || 0;
           const importe = cantidad * precio;
-          // Fila descripción SOLO primer dato
+          // Fila descripción (debe verse antes de los datos, ocupando toda la fila)
           const trDesc = document.createElement("tr");
           trDesc.className = "desc-row";
-          trDesc.innerHTML = `<td colspan="5">${l.Descripcion || "(Sin descripción)"}</td>`;
+          trDesc.innerHTML = `<td colspan="5"><span>${l.Descripcion || "(Sin descripción)"}</span></td>`;
           tbody.appendChild(trDesc);
           // Fila datos alineados con encabezados (menos descripción)
           const trDatos = document.createElement("tr");
