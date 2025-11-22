@@ -114,7 +114,6 @@
       padding: 2px 6px;
       text-align: center;
     }
-
     /* --------- TICKET MODE: <=80mm ---------- */
     @media (max-width: 80mm) {
       .traslado-carta {
@@ -134,55 +133,62 @@
       .nombre-negocio { font-size: 19px;}
       .datos-negocio { font-size: 13px;}
       .titulo-traslado { font-size:15px;}
-      .detalle-table { width:100%; margin-bottom:5px; table-layout:fixed; }
-      .detalle-table thead tr th { 
-        font-size:10px; 
-        padding:2px 0px; 
-        border-left:none;
-        border-right:none;
-        background:#f3f3f3;
+      .detalle-table { width:100%; margin-bottom:5px;}
+      .detalle-table thead tr th {
+        font-size:10px;
+        padding:2px 0px;
+        border-left:none;border-right:none;
       }
-      /* Menos espacio para No y Cantidad */
-      .detalle-table thead tr th.no-th, .detalle-table tbody td.no-td { width: 10%; }
-      .detalle-table thead tr th.cant-th, .detalle-table tbody td.cant-td { width: 16%; }
-      .detalle-table thead tr th.desc-th, .detalle-table tbody td.desc-td { width: 37%; }
-      .detalle-table thead tr th.precio-th, .detalle-table tbody td.precio-td { width: 18%; }
-      .detalle-table thead tr th.importe-th, .detalle-table tbody td.importe-td { width: 19%; }
-      .detalle-table thead tr th { 
-        text-align: left;
+      .detalle-table thead tr th.no-th {
+        width: 7%;
+        min-width: 18px;
+        max-width: 24px;
+      }
+      .detalle-table thead tr th.desc-th {display:none;}
+      .detalle-table thead tr th.cant-th {
+        width: 13%;
+        min-width: 28px;
+        max-width: 40px;
       }
       .detalle-table tbody tr {display:table-row;}
-      /* Ajustes de celdas */
       .detalle-table td {
-        font-size:11px;
-        padding: 1px 2px;
+        font-size: 9.5px !important;
+        padding: 1px 1px !important;
         border-top:none;
         border-bottom:1px dashed #ddd;
         border-left:none;
         border-right:none;
         background:none !important;
-        word-break: break-word;
-        overflow-wrap: break-word;
-        text-align:left;
+        word-break:break-word;
       }
       .detalle-table .desc-td {
         font-weight: bold;
-        font-size:12px;
+        font-size:11px;
         color:#222;
         padding-bottom:0;
         padding-top:4px;
         background:none !important;
         border:none !important;
+        text-align:left;
         width:100%;
         display:block;
-        text-align:left;
+        word-break:break-word;
       }
-      /* Baja el tamaño de fuente de Precio e Importe */
-      .detalle-table .precio-td,
-      .detalle-table .importe-td {
-        font-size: 10px;
+      .detalle-table .data-row td.no-td {
+        width: 7%;
+        min-width: 18px;
+        max-width: 24px;
+        text-align: left;
       }
-
+      .detalle-table .data-row td.cant-td {
+        width: 13%;
+        min-width: 28px;
+        max-width: 40px;
+        text-align: right;
+      }
+      .detalle-table .data-row td {
+        font-size:9.6px !important;
+      }
       .resumen-final td { font-size:13px;}
       .footer-table td {font-size:13px;}
       .barcode-box { margin-top: 5px;}
@@ -225,9 +231,9 @@
         <tr>
           <th class="no-th">No</th>
           <th class="desc-th">Descripción</th>
-          <th class="cant-th">Cantidad</th>
-          <th class="precio-th">Precio</th>
-          <th class="importe-th">Importe</th>
+          <th class="cant-th">Cant</th>
+          <th>Precio</th>
+          <th>Importe</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -285,40 +291,49 @@
     function renderDetalle(detalle) {
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
+
       if (isTicketView()) {
-        // Alinea encabezados en la misma fila, menos espacio para No y Cantidad
+        // Cada producto va como dos filas: descripcion y luego datos
         detalle.forEach((l, idx) => {
-          var tr = document.createElement("tr");
-          // No
-          var tdNo = document.createElement("td");
-          tdNo.className = "no-td";
-          tdNo.textContent = idx + 1;
-          // Descripción ocupa ancho
+          // Fila exclusiva para descripcion
+          var trDesc = document.createElement("tr");
           var tdDesc = document.createElement("td");
           tdDesc.className = "desc-td";
+          tdDesc.setAttribute("colspan", "5");
           tdDesc.textContent = l.Descripcion || "(Sin descripción)";
+          trDesc.appendChild(tdDesc);
+          tbody.appendChild(trDesc);
+
+          // Fila para datos alineados a headers
+          var trDatos = document.createElement("tr");
+          trDatos.className = "data-row";
+          // No
+          var tdNo = document.createElement("td");
+          tdNo.textContent = idx + 1;
+          tdNo.className = "no-td";
+          // blank para la columna descripción (no mostrar nada pero alinearla)
+          var tdBlank = document.createElement("td");
+          tdBlank.textContent = "";
           // Cantidad
-          var tdCantidad = document.createElement("td");
-          tdCantidad.className = "cant-td";
-          tdCantidad.textContent = parseFloat(l.Cantidad) || 0;
+          var tdCant = document.createElement("td");
+          tdCant.textContent = parseFloat(l.Cantidad) || 0;
+          tdCant.className = "cant-td";
           // Precio
           var tdPrecio = document.createElement("td");
-          tdPrecio.className = "precio-td";
           tdPrecio.textContent = formatCurrency(parseFloat(l.Precio) || 0);
           // Importe
           var cantidad = parseFloat(l.Cantidad) || 0;
           var precio = parseFloat(l.Precio) || 0;
           var tdImporte = document.createElement("td");
-          tdImporte.className = "importe-td";
           tdImporte.textContent = formatCurrency(cantidad * precio);
 
-          tr.appendChild(tdNo);
-          tr.appendChild(tdDesc);
-          tr.appendChild(tdCantidad);
-          tr.appendChild(tdPrecio);
-          tr.appendChild(tdImporte);
+          trDatos.appendChild(tdNo);
+          trDatos.appendChild(tdBlank);
+          trDatos.appendChild(tdCant);
+          trDatos.appendChild(tdPrecio);
+          trDatos.appendChild(tdImporte);
 
-          tbody.appendChild(tr);
+          tbody.appendChild(trDatos);
         });
       } else {
         // Vista mayor: tabla tradicional
