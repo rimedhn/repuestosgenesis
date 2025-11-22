@@ -1,378 +1,407 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Traslado de Productos</title>
-  <link rel="icon" href="https://github.com/rimedhn/repuestosgenesis/blob/main/Repuestos%20Genesis%20Logo.jpg?raw=true" type="image/x-icon">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #fff;
-    }
-    .traslado-carta {
-      width: 8.2in;
-      max-width: 8.2in;
-      min-width: 210mm;
-      background: #fff;
-      margin: 0 auto;
-      padding: 10px 24px 14px 24px;
-      box-sizing: border-box;
-      border: 1px solid #eee;
-      position: relative;
-    }
-    .encabezado-row {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      margin-bottom: 8px;
-    }
-    .encabezado-negocio {
-      flex-shrink: 0;
-      margin-right: 18px;
-      display: flex;
-      align-items: center;
-      min-width: 70px;
-    }
-    .encabezado-negocio .logo {
-      width: 62px;
-      height: 62px;
-      object-fit: contain;
-      margin-bottom: 0px;
-      border-radius: 14px;
-      border: 2px solid #eee;
-      box-shadow: 0 2px 6px #ccc;
-      background: #fff;
-      display: inline-block;
-    }
-    .datos-negocio {
-      flex-grow: 1;
-      min-width: 0;
-    }
-    .nombre-negocio {
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .titulo-traslado {
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 8px;
-      margin-top: 2px;
-    }
-    .datos-generales, .detalle-table, .footer-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 9px;
-      font-size: 14px;
-    }
-    .datos-generales td {
-      padding: 2px 4px;
-      border: none;
-      font-size: 14px;
-      vertical-align: top;
-    }
-    .detalle-table th, .detalle-table td {
-      padding: 2px 3px;
-      border: 1px solid #777;
-      vertical-align: top;
-      text-align: center;
-      font-size: 14px;
-    }
-    .detalle-table th {
-      background: #f3f3f3;
-      font-weight: bold;
-      font-size: 13px;
-    }
-    .resumen-final {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      margin-bottom: 3px;
-      font-size: 16px;
-    }
-    .resumen-final td {
-      border: none;
-      padding: 3px 6px;
-      font-size: 16px;
-      text-align: right;
-    }
-    .barcode-box {
-      text-align: center;
-      margin-top: 12px;
-      margin-bottom: 3px;
-    }
-    #barcode { max-width: 180px; width: 100%; height: 50px; object-fit: contain; background: #fff; display: inline-block; }
-    .footer-table {
-      margin-top:2px;
-    }
-    .footer-table td {
-      border: none;
-      font-size: 15px;
-      padding: 2px 6px;
-      text-align: center;
-    }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traslado de Productos</title>
+  <link rel="icon" href="https://github.com/rimedhn/repuestosgenesis/blob/main/Repuestos%20Genesis%20Logo.jpg?raw=true" type="image/x-icon">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+    }
+    .traslado-carta {
+      width: 8.2in;
+      max-width: 8.2in;
+      min-width: 210mm;
+      background: #fff;
+      margin: 0 auto;
+      padding: 10px 24px 14px 24px;
+      box-sizing: border-box;
+      border: 1px solid #eee;
+      position: relative;
+    }
+    .encabezado-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .encabezado-negocio {
+      flex-shrink: 0;
+      margin-right: 18px;
+      display: flex;
+      align-items: center;
+      min-width: 70px;
+    }
+    .encabezado-negocio .logo {
+      width: 62px;
+      height: 62px;
+      object-fit: contain;
+      margin-bottom: 0px;
+      border-radius: 14px;
+      border: 2px solid #eee;
+      box-shadow: 0 2px 6px #ccc;
+      background: #fff;
+      display: inline-block;
+    }
+    .datos-negocio {
+      flex-grow: 1;
+      min-width: 0;
+    }
+    .nombre-negocio {
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .titulo-traslado {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      margin-top: 2px;
+    }
+    .datos-generales, .detalle-table, .footer-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 9px;
+      font-size: 14px;
+    }
+    .datos-generales td {
+      padding: 2px 4px;
+      border: none;
+      font-size: 14px;
+      vertical-align: top;
+    }
+    .detalle-table th, .detalle-table td {
+      padding: 2px 3px;
+      border: 1px solid #777;
+      vertical-align: top;
+      text-align: center;
+      font-size: 14px;
+    }
+    .detalle-table th {
+      background: #f3f3f3;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .resumen-final {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      margin-bottom: 3px;
+      font-size: 16px;
+    }
+    .resumen-final td {
+      border: none;
+      padding: 3px 6px;
+      font-size: 16px;
+      text-align: right;
+    }
+    .barcode-box {
+      text-align: center;
+      margin-top: 12px;
+      margin-bottom: 3px;
+    }
+    #barcode { max-width: 180px; width: 100%; height: 50px; object-fit: contain; background: #fff; display: inline-block; }
+    .footer-table {
+      margin-top:2px;
+    }
+    .footer-table td {
+      border: none;
+      font-size: 15px;
+      padding: 2px 6px;
+      text-align: center;
+    }
 
-    /* --------- TICKET MODE: <=80mm ---------- */
-    @media (max-width: 80mm) {
-      .traslado-carta {
-        max-width: 80mm !important;
-        min-width: unset !important;
-        width: 100% !important;
-        padding: 6px 3px 10px 3px !important;
-      }
-      .encabezado-row { display: block; width: 100%;}
-      .encabezado-negocio {
-        margin-right: 0;
-        justify-content: center;
-        margin-bottom: 5px;
-      }
-      .encabezado-negocio .logo { width: 90px; height: 90px; margin-bottom: 5px;}
-      .datos-negocio { text-align: center; }
-      .nombre-negocio { font-size: 19px;}
-      .datos-negocio { font-size: 13px;}
-      .titulo-traslado { font-size:15px;}
-      .detalle-table { width:100%; margin-bottom:5px;}
-      .detalle-table thead tr th {
-        font-size:11px; padding:2px 0px;
-        border-left:none;border-right:none;
-      }
-      .detalle-table thead tr th.desc-th {display:none;}
-      .detalle-table tbody tr {display:table-row;}
-      .detalle-table td {
-        font-size:11px;
-        padding: 1px 2px;
-        border-top:none;
-        border-bottom:1px dashed #ddd;
-        border-left:none;
-        border-right:none;
-        background:none !important;
-      }
-      .detalle-table .desc-td {
-        font-weight: bold;
-        font-size:12px;
-        color:#222;
-        padding-bottom:0;
-        padding-top:4px;
-        background:none !important;
-        border:none !important;
-        text-align:left;
-        width:100%;
-        display:block;
-      }
-      .resumen-final td { font-size:13px;}
-      .footer-table td {font-size:13px;}
-      .barcode-box { margin-top: 5px;}
-    }
-    /* --------- PRINT MODE carta ----------- */
-    @media print {
-      .traslado-carta {width:8.2in;max-width:8.2in;min-width:210mm;padding:7px 8px 10px 8px;}
-      .encabezado-row {margin-bottom:8px;}
-      .encabezado-negocio .logo { width: 62px; height: 62px;}
-      .titulo-traslado {font-size:16px;}
-      .nombre-negocio {font-size:20px;}
-      .datos-negocio {font-size:13px;}
-      .datos-generales td,
-      .footer-table td {font-size:12px;}
-      .resumen-final td {font-size:14px;}
-    }
-    /* PRINT MODE: margins for ticket */
-    @media print and (max-width: 80mm) {
-      body, html { margin: 0 !important; padding: 0 !important; }
-      @page { size: 80mm auto; margin: 2mm !important; }
-      .traslado-carta { margin: 0 !important; padding: 2mm !important; }
-    }
-  </style>
+    /* --------- TICKET MODE: <=80mm ---------- */
+    @media (max-width: 80mm) {
+      .traslado-carta {
+        max-width: 80mm !important;
+        min-width: unset !important;
+        width: 100% !important;
+        padding: 6px 3px 10px 3px !important;
+      }
+      .encabezado-row { display: block; width: 100%;}
+      .encabezado-negocio {
+        margin-right: 0;
+        justify-content: center;
+        margin-bottom: 5px;
+      }
+      .encabezado-negocio .logo { width: 90px; height: 90px; margin-bottom: 5px;}
+      .datos-negocio { text-align: center; }
+      .nombre-negocio { font-size: 19px;}
+      .datos-negocio { font-size: 13px;}
+      .titulo-traslado { font-size:15px;}
+      .detalle-table { width:100%; margin-bottom:5px;}
+
+      /* Ocultar encabezado de Descripción */
+      .detalle-table thead tr th.desc-th {display:none;}
+
+      .detalle-table thead tr th {
+        font-size:11px; padding:2px 0px;
+        border-left:none;border-right:none;
+      }
+
+      /* Ocultar la descripción en la celda tradicional */
+      .detalle-table tbody tr td:nth-child(2) { display: none; }
+
+      .detalle-table tbody tr {display:table-row;}
+
+      /* Estilos para las celdas de datos (fila 2) */
+      .detalle-table td {
+        font-size:11px;
+        padding: 1px 2px;
+        border-top:none;
+        border-bottom:1px dashed #ddd;
+        border-left:none;
+        border-right:none;
+        background:none !important;
+      }
+
+      /* Estilo para la fila de descripción */
+      .desc-row {
+        background: none !important;
+        border: none !important;
+      }
+      .desc-row td {
+        font-weight: bold;
+        font-size:12px;
+        color:#222;
+        padding-bottom:0;
+        padding-top:4px;
+        background:none !important;
+        border:none !important;
+        text-align:left;
+        width:100%;
+      }
+
+      /* Estilo para la fila de datos */
+      .data-row td:first-child {
+        text-align: center; /* No */
+      }
+      .data-row td:nth-child(3) {
+        text-align: center; /* Cantidad */
+      }
+      .data-row td:nth-child(4) {
+        text-align: right; /* Precio */
+      }
+      .data-row td:last-child {
+        text-align: right; /* Importe */
+      }
+
+      .resumen-final td { font-size:13px;}
+      .footer-table td {font-size:13px;}
+      .barcode-box { margin-top: 5px;}
+    }
+    /* --------- PRINT MODE carta ----------- */
+    @media print {
+      .traslado-carta {width:8.2in;max-width:8.2in;min-width:210mm;padding:7px 8px 10px 8px;}
+      .encabezado-row {margin-bottom:8px;}
+      .encabezado-negocio .logo { width: 62px; height: 62px;}
+      .titulo-traslado {font-size:16px;}
+      .nombre-negocio {font-size:20px;}
+      .datos-negocio {font-size:13px;}
+      .datos-generales td,
+      .footer-table td {font-size:12px;}
+      .resumen-final td {font-size:14px;}
+    }
+    /* PRINT MODE: margins for ticket */
+    @media print and (max-width: 80mm) {
+      body, html { margin: 0 !important; padding: 0 !important; }
+      @page { size: 80mm auto; margin: 2mm !important; }
+      .traslado-carta { margin: 0 !important; padding: 2mm !important; }
+    }
+  </style>
 </head>
 <body>
-  <div class="traslado-carta">
-    <div class="encabezado-row">
-      <div class="encabezado-negocio">
-        <img src="https://github.com/rimedhn/repuestosgenesis/blob/main/Repuestos%20Genesis%20Logo.jpg?raw=true" class="logo" alt="Logo"/>
-      </div>
-      <div class="datos-negocio">
-        <div class="nombre-negocio">Repuestos Genesis</div>
-        <div>+504 9999-9999 &nbsp;|&nbsp; repuestosgenesis@gmail.com</div>
-      </div>
-    </div>
-    <div class="titulo-traslado">Traslado de Productos</div>
-    <table class="datos-generales" id="datosGenerales"></table>
-    <table class="detalle-table" id="detalleTable">
-      <thead>
-        <tr>
-          <th>No</th>
-          <th class="desc-th">Descripción</th>
-          <th>Cantidad</th>
-          <th>Precio</th>
-          <th>Importe</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <table class="resumen-final">
-      <tr>
-        <td><b>Importe total:</b></td>
-        <td id="importeTotal"></td>
-      </tr>
-      <tr>
-        <td><b>Total productos:</b></td>
-        <td id="totalProductos"></td>
-      </tr>
-    </table>
-    <div class="barcode-box">
-      <svg id="barcode"></svg>
-    </div>
-    <table class="footer-table">
-      <tr>
-        <td><b>Id Traslado:</b></td>
-        <td id="footerIdTraslado"></td>
-      </tr>
-      <tr>
-        <td><b>Usuario:</b></td>
-        <td id="footerUsuario"></td>
-      </tr>
-    </table>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-  <script>
-    const docId = "1U-GCBT2vw1R4Uvy08knqEuC7V_1KckjgopcSfhzAolk";
-    const urlTraslados = `https://opensheet.elk.sh/${docId}/Traslados`;
-    const urlTraslado = `https://opensheet.elk.sh/${docId}/Traslado`;
+  <div class="traslado-carta">
+    <div class="encabezado-row">
+      <div class="encabezado-negocio">
+        <img src="https://github.com/rimedhn/repuestosgenesis/blob/main/Repuestos%20Genesis%20Logo.jpg?raw=true" class="logo" alt="Logo"/>
+      </div>
+      <div class="datos-negocio">
+        <div class="nombre-negocio">Repuestos Genesis</div>
+        <div>+504 9999-9999 &nbsp;|&nbsp; repuestosgenesis@gmail.com</div>
+      </div>
+    </div>
+    <div class="titulo-traslado">Traslado de Productos</div>
+    <table class="datos-generales" id="datosGenerales"></table>
+    <table class="detalle-table" id="detalleTable">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th class="desc-th">Descripción</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Importe</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <table class="resumen-final">
+      <tr>
+        <td><b>Importe total:</b></td>
+        <td id="importeTotal"></td>
+      </tr>
+      <tr>
+        <td><b>Total productos:</b></td>
+        <td id="totalProductos"></td>
+      </tr>
+    </table>
+    <div class="barcode-box">
+      <svg id="barcode"></svg>
+    </div>
+    <table class="footer-table">
+      <tr>
+        <td><b>Id Traslado:</b></td>
+        <td id="footerIdTraslado"></td>
+      </tr>
+      <tr>
+        <td><b>Usuario:</b></td>
+        <td id="footerUsuario"></td>
+      </tr>
+    </table>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script>
+    const docId = "1U-GCBT2vw1R4Uvy08knqEuC7V_1KckjgopcSfhzAolk";
+    const urlTraslados = `https://opensheet.elk.sh/${docId}/Traslados`;
+    const urlTraslado = `https://opensheet.elk.sh/${docId}/Traslado`;
 
-    function getQueryParam(param) {
-      var urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
+    function getQueryParam(param) {
+      var urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
 
-    function formatCurrency(num) {
-      if (!num || isNaN(num)) return "L 0.00";
-      return "L " + Number(num).toLocaleString('es-HN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    }
+    function formatCurrency(num) {
+      if (!num || isNaN(num)) return "L 0.00";
+      return "L " + Number(num).toLocaleString('es-HN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
 
-    function showBarcode(id) {
-      if (!id) id = '';
-      var bc = document.getElementById('barcode');
-      JsBarcode(bc, id, { format: "CODE128", width:2, height:50, displayValue:false, margin:0 });
-    }
+    function showBarcode(id) {
+      if (!id) id = '';
+      var bc = document.getElementById('barcode');
+      JsBarcode(bc, id, { format: "CODE128", width:2, height:50, displayValue:false, margin:0 });
+    }
 
-    function isTicketView() {
-      return window.innerWidth <= 350 || window.matchMedia('(max-width: 80mm)').matches;
-    }
+    function isTicketView() {
+      return window.innerWidth <= 350 || window.matchMedia('(max-width: 80mm)').matches;
+    }
 
-    function renderDetalle(detalle) {
-      const tbody = document.getElementById("detalleTable").querySelector("tbody");
-      tbody.innerHTML = "";
-      if (isTicketView()) {
-        // Cada producto va como dos filas: descripcion y luego datos
-        detalle.forEach((l, idx) => {
-          // Fila exclusiva para descripcion
-          var trDesc = document.createElement("tr");
-          var tdDesc = document.createElement("td");
-          tdDesc.className = "desc-td";
-          tdDesc.setAttribute("colspan", "5");
-          tdDesc.textContent = l.Descripcion || "(Sin descripción)";
-          trDesc.appendChild(tdDesc);
-          tbody.appendChild(trDesc);
+    function renderDetalle(detalle) {
+      const tbody = document.getElementById("detalleTable").querySelector("tbody");
+      tbody.innerHTML = "";
+      if (isTicketView()) {
+        // Cada producto va como dos filas: descripcion y luego datos
+        detalle.forEach((l, idx) => {
+          // 1. Fila exclusiva para descripcion (ocupa 5 columnas para evitar desbordamiento)
+          var trDesc = document.createElement("tr");
+          trDesc.className = "desc-row";
+          var tdDesc = document.createElement("td");
+          tdDesc.setAttribute("colspan", "5"); // Ocupa todo el ancho
+          tdDesc.textContent = l.Descripcion || "(Sin descripción)";
+          trDesc.appendChild(tdDesc);
+          tbody.appendChild(trDesc);
 
-          // Fila para datos alineados a headers
-          var trDatos = document.createElement("tr");
-          trDatos.className = "data-row";
-          // No
-          var tdNo = document.createElement("td"); tdNo.textContent = idx + 1;
-          // blank para la columna descripción (no mostrar nada pero alinearla)
-          var tdBlank = document.createElement("td"); tdBlank.textContent = "";
-          // Cantidad
-          var tdCant = document.createElement("td"); tdCant.textContent = parseFloat(l.Cantidad) || 0;
-          // Precio
-          var tdPrecio = document.createElement("td"); tdPrecio.textContent = formatCurrency(parseFloat(l.Precio) || 0);
-          // Importe
-          var cantidad = parseFloat(l.Cantidad) || 0;
-          var precio = parseFloat(l.Precio) || 0;
-          var tdImporte = document.createElement("td"); tdImporte.textContent = formatCurrency(cantidad * precio);
+          // 2. Fila para datos alineados a headers
+          var trDatos = document.createElement("tr");
+          trDatos.className = "data-row";
+          // No (Col 1)
+          var tdNo = document.createElement("td"); tdNo.textContent = idx + 1;
+          // Columna de Descripción que no se usa pero es necesaria para alinear (Col 2)
+          var tdBlank = document.createElement("td"); tdBlank.textContent = "";
+          // Cantidad (Col 3)
+          var tdCant = document.createElement("td"); tdCant.textContent = parseFloat(l.Cantidad) || 0;
+          // Precio (Col 4)
+          var tdPrecio = document.createElement("td"); tdPrecio.textContent = formatCurrency(parseFloat(l.Precio) || 0);
+          // Importe (Col 5)
+          var cantidad = parseFloat(l.Cantidad) || 0;
+          var precio = parseFloat(l.Precio) || 0;
+          var tdImporte = document.createElement("td"); tdImporte.textContent = formatCurrency(cantidad * precio);
 
-          trDatos.appendChild(tdNo);
-          trDatos.appendChild(tdBlank);
-          trDatos.appendChild(tdCant);
-          trDatos.appendChild(tdPrecio);
-          trDatos.appendChild(tdImporte);
+          trDatos.appendChild(tdNo);
+          trDatos.appendChild(tdBlank); // Esta celda está oculta por CSS pero mantiene el orden de la tabla
+          trDatos.appendChild(tdCant);
+          trDatos.appendChild(tdPrecio);
+          trDatos.appendChild(tdImporte);
 
-          tbody.appendChild(trDatos);
-        });
-      } else {
-        // Vista mayor: tabla tradicional
-        detalle.forEach((l, idx) => {
-          var tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${idx + 1}</td>
-            <td class="cell-desc">${l.Descripcion || "(Sin descripción)"}</td>
-            <td>${parseFloat(l.Cantidad) || 0}</td>
-            <td>${formatCurrency(parseFloat(l.Precio) || 0)}</td>
-            <td>${formatCurrency((parseFloat(l.Cantidad) || 0) * (parseFloat(l.Precio) || 0))}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-      }
-    }
+          tbody.appendChild(trDatos);
+        });
+      } else {
+        // Vista mayor: tabla tradicional
+        detalle.forEach((l, idx) => {
+          var tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td class="cell-desc">${l.Descripcion || "(Sin descripción)"}</td>
+            <td>${parseFloat(l.Cantidad) || 0}</td>
+            <td>${formatCurrency(parseFloat(l.Precio) || 0)}</td>
+            <td>${formatCurrency((parseFloat(l.Cantidad) || 0) * (parseFloat(l.Precio) || 0))}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
 
-    function cargaTraslado() {
-      const idTraslado = getQueryParam('id_traslado');
-      if (!idTraslado) {
-        alert("Falta parámetro id_traslado en la URL");
-        return;
-      }
-      Promise.all([
-        fetch(urlTraslados).then(r => r.json()),
-        fetch(urlTraslado).then(r => r.json())
-      ]).then(([traslados, lineas]) => {
-        const trasladoGen = traslados.find(r => r.IdTraslado == idTraslado);
-        if (!trasladoGen) {
-          alert("No se encontró el traslado.");
-          return;
-        }
-        document.getElementById("datosGenerales").innerHTML = `
-          <tr>
-            <td><b>Origen:</b></td>
-            <td>${trasladoGen.NombreOrigen}</td>
-          </tr>
-          <tr>
-            <td><b>Destino:</b></td>
-            <td>${trasladoGen.NombreDestino}</td>
-          </tr>
-          <tr>
-            <td><b>Fecha y Hora:</b></td>
-            <td>${trasladoGen["Fecha hora"]}</td>
-          </tr>
-          <tr>
-            <td><b>Estatus:</b></td>
-            <td>${trasladoGen.Estatus}</td>
-          </tr>
-        `;
-        document.getElementById("footerIdTraslado").textContent = trasladoGen.IdTraslado;
-        document.getElementById("footerUsuario").textContent = trasladoGen.Usuario;
-        showBarcode(trasladoGen.IdTraslado);
+    function cargaTraslado() {
+      const idTraslado = getQueryParam('id_traslado');
+      if (!idTraslado) {
+        alert("Falta parámetro id_traslado en la URL");
+        return;
+      }
+      Promise.all([
+        fetch(urlTraslados).then(r => r.json()),
+        fetch(urlTraslado).then(r => r.json())
+      ]).then(([traslados, lineas]) => {
+        const trasladoGen = traslados.find(r => r.IdTraslado == idTraslado);
+        if (!trasladoGen) {
+          alert("No se encontró el traslado.");
+          return;
+        }
+        document.getElementById("datosGenerales").innerHTML = `
+          <tr>
+            <td><b>Origen:</b></td>
+            <td>${trasladoGen.NombreOrigen}</td>
+          </tr>
+          <tr>
+            <td><b>Destino:</b></td>
+            <td>${trasladoGen.NombreDestino}</td>
+          </tr>
+          <tr>
+            <td><b>Fecha y Hora:</b></td>
+            <td>${trasladoGen["Fecha hora"]}</td>
+          </tr>
+          <tr>
+            <td><b>Estatus:</b></td>
+            <td>${trasladoGen.Estatus}</td>
+          </tr>
+        `;
+        document.getElementById("footerIdTraslado").textContent = trasladoGen.IdTraslado;
+        document.getElementById("footerUsuario").textContent = trasladoGen.Usuario;
+        showBarcode(trasladoGen.IdTraslado);
 
-        // Detalle y totales
-        const detalle = lineas.filter(l => l.Traslado == idTraslado);
-        renderDetalle(detalle);
+        // Detalle y totales
+        const detalle = lineas.filter(l => l.Traslado == idTraslado);
+        renderDetalle(detalle);
 
-        let totalProductos = 0, totalImporte = 0;
-        detalle.forEach(l => {
-          const cantidad = parseFloat(l.Cantidad) || 0;
-          const precio = parseFloat(l.Precio) || 0;
-          const importe = cantidad * precio;
-          totalProductos += cantidad;
-          totalImporte += importe;
-        });
-        document.getElementById("totalProductos").textContent = totalProductos;
-        document.getElementById("importeTotal").textContent = formatCurrency(totalImporte);
+        let totalProductos = 0, totalImporte = 0;
+        detalle.forEach(l => {
+          const cantidad = parseFloat(l.Cantidad) || 0;
+          const precio = parseFloat(l.Precio) || 0;
+          const importe = cantidad * precio;
+          totalProductos += cantidad;
+          totalImporte += importe;
+        });
+        document.getElementById("totalProductos").textContent = totalProductos;
+        document.getElementById("importeTotal").textContent = formatCurrency(totalImporte);
 
-        window.print();
-      }).catch(err => { alert("Error al cargar los datos: " + err); });
-    }
-    window.onload = cargaTraslado;
-    window.onresize = function() { cargaTraslado(); };
-  </script>
+        window.print();
+      }).catch(err => { alert("Error al cargar los datos: " + err); });
+    }
+    window.onload = cargaTraslado;
+    window.onresize = function() { cargaTraslado(); };
+  </script>
 </body>
 </html>
