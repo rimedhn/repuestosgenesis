@@ -114,6 +114,7 @@
       padding: 2px 6px;
       text-align: center;
     }
+
     /* --------- TICKET MODE: <=80mm ---------- */
     @media (max-width: 80mm) {
       .traslado-carta {
@@ -133,61 +134,48 @@
       .nombre-negocio { font-size: 19px;}
       .datos-negocio { font-size: 13px;}
       .titulo-traslado { font-size:15px;}
-      .detalle-table { width:100%; margin-bottom:5px;}
-      .detalle-table thead tr th {
-        font-size:10px;
-        padding:2px 0px;
-        border-left:none;border-right:none;
+      .detalle-table { width:100%; margin-bottom:5px; table-layout:fixed; }
+      .detalle-table thead tr th { 
+        font-size:10px; 
+        padding:2px 0px; 
+        border-left:none;
+        border-right:none;
+        background:#f3f3f3;
+        text-align:left;
       }
-      .detalle-table thead tr th.no-th {
-        width: 7%;
-        min-width: 18px;
-        max-width: 24px;
-      }
-      .detalle-table thead tr th.desc-th {display:none;}
-      .detalle-table thead tr th.cant-th {
-        width: 13%;
-        min-width: 28px;
-        max-width: 40px;
-      }
+      /* Campo NO y CANTIDAD menos espacio */
+      .detalle-table thead tr th.no-th, .detalle-table tbody td.no-td { width: 8%; }
+      .detalle-table thead tr th.desc-th, .detalle-table tbody td.desc-td { width: 37%; }
+      .detalle-table thead tr th.cant-th, .detalle-table tbody td.cant-td { width: 13%; }
+      .detalle-table thead tr th.precio-th, .detalle-table tbody td.precio-td { width: 21%; }
+      .detalle-table thead tr th.importe-th, .detalle-table tbody td.importe-td { width: 21%; }
       .detalle-table tbody tr {display:table-row;}
       .detalle-table td {
-        font-size: 9.5px !important;
-        padding: 1px 1px !important;
+        font-size:11px;
+        padding: 1px 2px;
         border-top:none;
         border-bottom:1px dashed #ddd;
         border-left:none;
         border-right:none;
         background:none !important;
-        word-break:break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        text-align:left;
       }
       .detalle-table .desc-td {
         font-weight: bold;
-        font-size:11px;
+        font-size:12px;
         color:#222;
         padding-bottom:0;
         padding-top:4px;
         background:none !important;
         border:none !important;
         text-align:left;
-        width:100%;
-        display:block;
-        word-break:break-word;
       }
-      .detalle-table .data-row td.no-td {
-        width: 7%;
-        min-width: 18px;
-        max-width: 24px;
-        text-align: left;
-      }
-      .detalle-table .data-row td.cant-td {
-        width: 13%;
-        min-width: 28px;
-        max-width: 40px;
-        text-align: right;
-      }
-      .detalle-table .data-row td {
-        font-size:9.6px !important;
+      /* Baja AÚN MÁS el tamaño de fuente SOLO para datos precio/importe */
+      .detalle-table .precio-td,
+      .detalle-table .importe-td {
+        font-size: 9px;
       }
       .resumen-final td { font-size:13px;}
       .footer-table td {font-size:13px;}
@@ -232,8 +220,8 @@
           <th class="no-th">No</th>
           <th class="desc-th">Descripción</th>
           <th class="cant-th">Cant</th>
-          <th>Precio</th>
-          <th>Importe</th>
+          <th class="precio-th">Precio</th>
+          <th class="importe-th">Importe</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -291,49 +279,40 @@
     function renderDetalle(detalle) {
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
-
       if (isTicketView()) {
-        // Cada producto va como dos filas: descripcion y luego datos
+        // Muestra encabezados en thead; datos alineados debajo
         detalle.forEach((l, idx) => {
-          // Fila exclusiva para descripcion
-          var trDesc = document.createElement("tr");
-          var tdDesc = document.createElement("td");
-          tdDesc.className = "desc-td";
-          tdDesc.setAttribute("colspan", "5");
-          tdDesc.textContent = l.Descripcion || "(Sin descripción)";
-          trDesc.appendChild(tdDesc);
-          tbody.appendChild(trDesc);
-
-          // Fila para datos alineados a headers
-          var trDatos = document.createElement("tr");
-          trDatos.className = "data-row";
+          var tr = document.createElement("tr");
           // No
           var tdNo = document.createElement("td");
-          tdNo.textContent = idx + 1;
           tdNo.className = "no-td";
-          // blank para la columna descripción (no mostrar nada pero alinearla)
-          var tdBlank = document.createElement("td");
-          tdBlank.textContent = "";
+          tdNo.textContent = idx + 1;
+          // Descripción ocupa ancho
+          var tdDesc = document.createElement("td");
+          tdDesc.className = "desc-td";
+          tdDesc.textContent = l.Descripcion || "(Sin descripción)";
           // Cantidad
-          var tdCant = document.createElement("td");
-          tdCant.textContent = parseFloat(l.Cantidad) || 0;
-          tdCant.className = "cant-td";
+          var tdCantidad = document.createElement("td");
+          tdCantidad.className = "cant-td";
+          tdCantidad.textContent = parseFloat(l.Cantidad) || 0;
           // Precio
           var tdPrecio = document.createElement("td");
+          tdPrecio.className = "precio-td";
           tdPrecio.textContent = formatCurrency(parseFloat(l.Precio) || 0);
           // Importe
           var cantidad = parseFloat(l.Cantidad) || 0;
           var precio = parseFloat(l.Precio) || 0;
           var tdImporte = document.createElement("td");
+          tdImporte.className = "importe-td";
           tdImporte.textContent = formatCurrency(cantidad * precio);
 
-          trDatos.appendChild(tdNo);
-          trDatos.appendChild(tdBlank);
-          trDatos.appendChild(tdCant);
-          trDatos.appendChild(tdPrecio);
-          trDatos.appendChild(tdImporte);
+          tr.appendChild(tdNo);
+          tr.appendChild(tdDesc);
+          tr.appendChild(tdCantidad);
+          tr.appendChild(tdPrecio);
+          tr.appendChild(tdImporte);
 
-          tbody.appendChild(trDatos);
+          tbody.appendChild(tr);
         });
       } else {
         // Vista mayor: tabla tradicional
