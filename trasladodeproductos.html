@@ -265,9 +265,9 @@
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
       if (isTicketView()) {
-        // Cada producto va como dos filas: descripcion y luego datos
+        // Cada producto: descripción ocupa una fila completa, los datos en la siguiente fila
         detalle.forEach((l, idx) => {
-          // Fila exclusiva para descripcion
+          // Primera fila: solo descripción en toda la fila
           var trDesc = document.createElement("tr");
           var tdDesc = document.createElement("td");
           tdDesc.className = "desc-td";
@@ -276,13 +276,13 @@
           trDesc.appendChild(tdDesc);
           tbody.appendChild(trDesc);
 
-          // Fila para datos alineados a headers
+          // Segunda fila: solo No, Cantidad, Precio, Importe distribuidos, sin descripción
           var trDatos = document.createElement("tr");
           trDatos.className = "data-row";
           // No
           var tdNo = document.createElement("td"); tdNo.textContent = idx + 1;
           // blank para la columna descripción (no mostrar nada pero alinearla)
-          var tdBlank = document.createElement("td"); tdBlank.textContent = "";
+          var tdBlank = document.createElement("td"); tdBlank.style.display = "none";
           // Cantidad
           var tdCant = document.createElement("td"); tdCant.textContent = parseFloat(l.Cantidad) || 0;
           // Precio
