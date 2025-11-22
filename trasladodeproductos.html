@@ -114,6 +114,7 @@
       padding: 2px 6px;
       text-align: center;
     }
+
     /* --------- TICKET MODE: <=80mm ---------- */
     @media (max-width: 80mm) {
       .traslado-carta {
@@ -129,9 +130,7 @@
         margin-bottom: 5px;
       }
       .encabezado-negocio .logo { width: 90px; height: 90px; margin-bottom: 5px;}
-      .datos-negocio {
-        text-align: center;
-      }
+      .datos-negocio { text-align: center; }
       .nombre-negocio { font-size: 19px;}
       .datos-negocio { font-size: 13px;}
       .titulo-traslado { font-size:15px;}
@@ -145,9 +144,10 @@
       .detalle-table td {
         font-size:11px;
         padding: 1px 2px;
-        text-align:left;
-        border-top:none; border-bottom:1px dashed #ddd;
-        border-left:none;border-right:none;
+        border-top:none;
+        border-bottom:1px dashed #ddd;
+        border-left:none;
+        border-right:none;
         background:none !important;
       }
       /* Descripcion en su propia fila con colspan */
@@ -181,18 +181,9 @@
     }
     /* PRINT MODE: margins for ticket */
     @media print and (max-width: 80mm) {
-      body, html {
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-      @page {
-        size: 80mm auto;
-        margin: 2mm !important;
-      }
-      .traslado-carta {
-        margin: 0 !important;
-        padding: 2mm !important;
-      }
+      body, html { margin: 0 !important; padding: 0 !important; }
+      @page { size: 80mm auto; margin: 2mm !important; }
+      .traslado-carta { margin: 0 !important; padding: 2mm !important; }
     }
   </style>
 </head>
@@ -268,7 +259,6 @@
     }
 
     function isTicketView() {
-      // Detect ancho real, no print
       return window.innerWidth <= 350 || window.matchMedia('(max-width: 80mm)').matches;
     }
 
@@ -276,39 +266,44 @@
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
       if (isTicketView()) {
-        // Ticket: cada producto ocupa dos filas, la primera la descripción (colspan), la segunda los datos
+        // Ticket: descripcion en una fila completa, luego los datos en la segunda.
         detalle.forEach((l, idx) => {
-          const cantidad = parseFloat(l.Cantidad) || 0;
-          const precio = parseFloat(l.Precio) || 0;
-          const importe = cantidad * precio;
-          // Fila 1: Descripción solo, ocupa toda la fila
+          // Fila 1: descripcion
           var trDesc = document.createElement("tr");
           var tdDesc = document.createElement("td");
           tdDesc.className = "desc-td";
-          tdDesc.colSpan = 5;
+          tdDesc.setAttribute("colspan", "5");
           tdDesc.textContent = l.Descripcion || "(Sin descripción)";
           trDesc.appendChild(tdDesc);
           tbody.appendChild(trDesc);
 
-          // Fila 2: datos alineados al header original
+          // Fila 2: datos
           var trDatos = document.createElement("tr");
           trDatos.className = "data-row";
+          // No
           var tdNo = document.createElement("td");
           tdNo.textContent = idx + 1;
+          // Descripción oculta (celda vacía, para alinear columnas)
           var tdBlank = document.createElement("td");
           tdBlank.textContent = "";
+          // Cantidad
           var tdCant = document.createElement("td");
-          tdCant.textContent = cantidad;
+          tdCant.textContent = parseFloat(l.Cantidad) || 0;
+          // Precio
           var tdPrecio = document.createElement("td");
-          tdPrecio.textContent = formatCurrency(precio);
+          tdPrecio.textContent = formatCurrency(parseFloat(l.Precio) || 0);
+          // Importe
           var tdImporte = document.createElement("td");
-          tdImporte.textContent = formatCurrency(importe);
+          const cantidad = parseFloat(l.Cantidad) || 0;
+          const precio = parseFloat(l.Precio) || 0;
+          tdImporte.textContent = formatCurrency(cantidad * precio);
 
           trDatos.appendChild(tdNo);
           trDatos.appendChild(tdBlank);
           trDatos.appendChild(tdCant);
           trDatos.appendChild(tdPrecio);
           trDatos.appendChild(tdImporte);
+
           tbody.appendChild(trDatos);
         });
       } else {
