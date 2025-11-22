@@ -12,7 +12,7 @@
       min-width: 240px;
       margin: auto;
       background: #fff;
-      padding: 10px 12px 10px 12px;
+      padding: 10px 12px;
       box-sizing: border-box;
       border: 1px solid #eee;
       position: relative;
@@ -66,7 +66,7 @@
       font-weight: bold;
       font-size: 13px;
     }
-    /* RESUMEN products and importe to right */
+    /* Totales alineados a la derecha */
     .resumen-derecha {
       position: absolute;
       right: 10px;
@@ -80,31 +80,52 @@
       font-size: 16px;
       text-align: right;
     }
-    /* Responsive ticket tiny mode */
-    @media (max-width: 80mm), print {
+    .footer-table td {
+      border: none;
+      font-size: 13px;
+      padding: 1px 6px;
+      text-align: left;
+    }
+    .barcode-box {
+      text-align: center;
+      margin-top: 16px;
+    }
+    .barcode-label { font-size: 13px; color: #333; letter-spacing: 1px; margin-bottom: 2px;}
+    #barcode { max-width: 180px; width: 100%; height: 50px; object-fit: contain; background: #fff; }
+
+    /* Responsive para ticket de 80mm o menos */
+    @media (max-width: 80mm) {
       .traslado-carta { max-width: 80mm !important; min-width: unset !important; width: 100% !important; }
-      .detalle-table, .detalle-table thead, .detalle-table tbody, .detalle-table tr, .detalle-table td, .detalle-table th { 
-        display: block;
-        width: 100%;
-        border: none !important;
+      .detalle-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+      .detalle-table thead tr th {
+        font-size: 11px;
+        padding: 2px 0px;
+        border-left: none;
+        border-right: none;
+      }
+      .detalle-table thead tr th.desc-th { display: none; }
+      .detalle-table tbody tr { display: table-row; }
+      .detalle-table td { 
+        font-size: 11px;
+        padding: 1px 2px; 
         text-align: left;
-        font-size: 11px;
+        border-top: none;
+        border-bottom: 1px dashed #ddd;
+        border-left: none;
+        border-right: none;
       }
-      .detalle-table thead { display: none; }
-      .detalle-table tr.producto-row {
-        margin-bottom: 5px;
-        border-bottom: 1px dashed #ccc;
-        padding-bottom: 2px;
+      .detalle-table td.desc-fila { display: none; }
+      .detalle-table td.cell-desc { display: none; }
+      .detalle-table td.cell-label { width: 33%; font-weight: bold; }
+      .detalle-table td.cell-value { width: 67%; font-weight: normal; }
+      .resumen-derecha { 
+        position: static !important; 
+        width: 100%; 
+        margin-top: 6px !important; 
+        text-align: right; 
+        font-size: 13px;
+        right: 0; top: unset; 
       }
-      .detalle-table td.desc-fila { font-weight: bold; width: 100%; border: none; font-size: 12px; }
-      .detalle-table td.valores-fila {
-        font-size: 11px;
-        color: #222;
-        margin-left: 4px;
-        margin-bottom: 2px;
-      }
-      .detalle-table td { padding: 1px 0 1px 2px !important; }
-      .resumen-derecha { position: static !important; width: 100%; margin-top: 6px; text-align: right; font-size: 13px; }
       .resumen-derecha td { font-size: 13px; }
     }
     @media print {
@@ -114,13 +135,6 @@
       .datos-generales td,
       .footer-table td { font-size: 11px; }
     }
-    /* Barcode style */
-    .barcode-box {
-      text-align: center;
-      margin-top: 16px;
-    }
-    .barcode-label { font-size: 13px; color: #333; letter-spacing: 1px; margin-bottom: 2px;}
-    #barcode { max-width: 180px; width: 100%; height: 50px; object-fit: contain; background: #fff; }
   </style>
 </head>
 <body>
@@ -133,11 +147,12 @@
     <div class="titulo-traslado">Traslado de Productos</div>
 
     <table class="datos-generales" id="datosGenerales"></table>
+
     <table class="detalle-table" id="detalleTable">
       <thead>
         <tr>
           <th>No</th>
-          <th>Descripción</th>
+          <th class="desc-th">Descripción</th>
           <th>Cantidad</th>
           <th>Precio</th>
           <th>Importe</th>
@@ -175,7 +190,6 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <script>
-    // URLs opensheet para el documento de Traslados y Traslado
     const docId = "1U-GCBT2vw1R4Uvy08knqEuC7V_1KckjgopcSfhzAolk";
     const urlTraslados = `https://opensheet.elk.sh/${docId}/Traslados`;
     const urlTraslado = `https://opensheet.elk.sh/${docId}/Traslado`;
@@ -190,14 +204,66 @@
       return "L " + Number(num).toLocaleString('es-HN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    function isNarrow() {
-      return (window.innerWidth <= 350) || window.matchMedia("(max-width: 80mm)").matches;
-    }
-
     function showBarcode(id) {
       if (!id) id = '';
       var bc = document.getElementById('barcode');
       JsBarcode(bc, id, { format: "CODE128", width:2, height:50, displayValue:false, margin:0 });
+    }
+
+    function isTicketView() {
+      // Detect ancho real, no print
+      return window.innerWidth <= 340 || window.matchMedia('(max-width: 80mm)').matches;
+    }
+
+    function renderDetalle(detalle) {
+      const tbody = document.getElementById("detalleTable").querySelector("tbody");
+      tbody.innerHTML = "";
+      if (isTicketView()) {
+        // Head = No | Cantidad | Precio | Importe (sin Descripción)
+        detalle.forEach((l, idx) => {
+          // No, Cantidad, Precio, Importe: cada dato en una fila con label
+          const cantidad = parseFloat(l.Cantidad) || 0;
+          const precio = parseFloat(l.Precio) || 0;
+          const importe = cantidad * precio;
+          // Fila No
+          const trNo = document.createElement("tr");
+          trNo.innerHTML = `<td class="cell-label">No</td><td class="cell-value" colspan="4">${idx + 1}</td>`;
+          tbody.appendChild(trNo);
+          // Fila Cantidad
+          const trCantidad = document.createElement("tr");
+          trCantidad.innerHTML = `<td class="cell-label">Cantidad</td><td class="cell-value" colspan="4">${cantidad}</td>`;
+          tbody.appendChild(trCantidad);
+          // Fila Precio
+          const trPrecio = document.createElement("tr");
+          trPrecio.innerHTML = `<td class="cell-label">Precio</td><td class="cell-value" colspan="4">${formatCurrency(precio)}</td>`;
+          tbody.appendChild(trPrecio);
+          // Fila Importe
+          const trImporte = document.createElement("tr");
+          trImporte.innerHTML = `<td class="cell-label">Importe</td><td class="cell-value" colspan="4">${formatCurrency(importe)}</td>`;
+          tbody.appendChild(trImporte);
+          // Fila descripción aparte (sin encabezado)
+          const trDesc = document.createElement("tr");
+          trDesc.innerHTML = `<td colspan="5" style="font-style:italic; color:#444;">${l.Descripcion || "(Sin descripción)"}</td>`;
+          tbody.appendChild(trDesc);
+        });
+      } else {
+        // Modo estándar
+        // Head = todo
+        detalle.forEach((l, idx) => {
+          const cantidad = parseFloat(l.Cantidad) || 0;
+          const precio = parseFloat(l.Precio) || 0;
+          const importe = cantidad * precio;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td class="cell-desc">${l.Descripcion || "(Sin descripción)"}</td>
+            <td>${cantidad}</td>
+            <td>${formatCurrency(precio)}</td>
+            <td>${formatCurrency(importe)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
     }
 
     function cargaTraslado() {
@@ -215,8 +281,8 @@
           alert("No se encontró el traslado.");
           return;
         }
-        // Mostrar datos generales (sin Usuario ni IdTraslado)
-        const datosGenHtml = `
+        // Datos generales
+        document.getElementById("datosGenerales").innerHTML = `
           <tr>
             <td><b>Origen:</b></td>
             <td>${trasladoGen.NombreOrigen}</td>
@@ -234,65 +300,27 @@
             <td>${trasladoGen.Estatus}</td>
           </tr>
         `;
-        document.getElementById("datosGenerales").innerHTML = datosGenHtml;
-
-        // Footer usuario e id
         document.getElementById("footerUsuario").textContent = trasladoGen.Usuario;
         document.getElementById("footerIdTraslado").textContent = trasladoGen.IdTraslado;
-
         showBarcode(trasladoGen.IdTraslado);
 
-        // Detalle de productos
+        // Detalle y totales
         const detalle = lineas.filter(l => l.Traslado == idTraslado);
-        const tbody = document.getElementById("detalleTable").querySelector("tbody");
-        tbody.innerHTML = "";
-        let totalProductos = 0, totalImporte = 0;
-        const narrowMode = isNarrow();
+        renderDetalle(detalle);
 
-        detalle.forEach((l, idx) => {
+        let totalProductos = 0, totalImporte = 0;
+        detalle.forEach(l => {
           const cantidad = parseFloat(l.Cantidad) || 0;
           const precio = parseFloat(l.Precio) || 0;
           const importe = cantidad * precio;
           totalProductos += cantidad;
           totalImporte += importe;
-
-          if (narrowMode) {
-            // Modo ticket vertical
-            const tr1 = document.createElement("tr");
-            tr1.className = "producto-row";
-            tr1.innerHTML = `<td colspan="5" class="desc-fila">${idx + 1}. ${l.Descripcion || "(Sin descripción)"}</td>`;
-            tbody.appendChild(tr1);
-
-            const tr2 = document.createElement("tr");
-            tr2.className = "producto-row";
-            tr2.innerHTML = `
-              <td colspan="5" class="valores-fila">
-                Cant: <b>${cantidad}</b>
-                &nbsp;|&nbsp; Precio: <b>${formatCurrency(precio)}</b>
-                &nbsp;|&nbsp; Importe: <b>${formatCurrency(importe)}</b>
-              </td>`;
-            tbody.appendChild(tr2);
-          } else {
-            // Modo normal horizontal
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${idx + 1}</td>
-              <td>${l.Descripcion || "(Sin descripción)"}</td>
-              <td>${cantidad}</td>
-              <td>${formatCurrency(precio)}</td>
-              <td>${formatCurrency(importe)}</td>
-            `;
-            tbody.appendChild(tr);
-          }
         });
-
         document.getElementById("totalProductos").textContent = totalProductos;
         document.getElementById("importeTotal").textContent = formatCurrency(totalImporte);
 
         window.print();
-      }).catch(err => {
-        alert("Error al cargar los datos: " + err);
-      });
+      }).catch(err => { alert("Error al cargar los datos: " + err); });
     }
     window.onload = cargaTraslado;
     window.onresize = function() { cargaTraslado(); };
