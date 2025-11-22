@@ -150,7 +150,6 @@
         border-right:none;
         background:none !important;
       }
-      /* Descripcion en su propia fila con colspan */
       .detalle-table .desc-td {
         font-weight: bold;
         font-size:12px;
@@ -161,7 +160,7 @@
         border:none !important;
         text-align:left;
         width:100%;
-        display:table-cell;
+        display:block;
       }
       .resumen-final td { font-size:13px;}
       .footer-table td {font-size:13px;}
@@ -266,9 +265,9 @@
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
       if (isTicketView()) {
-        // Ticket: descripcion en una fila completa, luego los datos en la segunda.
+        // Cada producto va como dos filas: descripcion y luego datos
         detalle.forEach((l, idx) => {
-          // Fila 1: descripcion
+          // Fila exclusiva para descripcion
           var trDesc = document.createElement("tr");
           var tdDesc = document.createElement("td");
           tdDesc.className = "desc-td";
@@ -277,26 +276,21 @@
           trDesc.appendChild(tdDesc);
           tbody.appendChild(trDesc);
 
-          // Fila 2: datos
+          // Fila para datos alineados a headers
           var trDatos = document.createElement("tr");
           trDatos.className = "data-row";
           // No
-          var tdNo = document.createElement("td");
-          tdNo.textContent = idx + 1;
-          // Descripción oculta (celda vacía, para alinear columnas)
-          var tdBlank = document.createElement("td");
-          tdBlank.textContent = "";
+          var tdNo = document.createElement("td"); tdNo.textContent = idx + 1;
+          // blank para la columna descripción (no mostrar nada pero alinearla)
+          var tdBlank = document.createElement("td"); tdBlank.textContent = "";
           // Cantidad
-          var tdCant = document.createElement("td");
-          tdCant.textContent = parseFloat(l.Cantidad) || 0;
+          var tdCant = document.createElement("td"); tdCant.textContent = parseFloat(l.Cantidad) || 0;
           // Precio
-          var tdPrecio = document.createElement("td");
-          tdPrecio.textContent = formatCurrency(parseFloat(l.Precio) || 0);
+          var tdPrecio = document.createElement("td"); tdPrecio.textContent = formatCurrency(parseFloat(l.Precio) || 0);
           // Importe
-          var tdImporte = document.createElement("td");
-          const cantidad = parseFloat(l.Cantidad) || 0;
-          const precio = parseFloat(l.Precio) || 0;
-          tdImporte.textContent = formatCurrency(cantidad * precio);
+          var cantidad = parseFloat(l.Cantidad) || 0;
+          var precio = parseFloat(l.Precio) || 0;
+          var tdImporte = document.createElement("td"); tdImporte.textContent = formatCurrency(cantidad * precio);
 
           trDatos.appendChild(tdNo);
           trDatos.appendChild(tdBlank);
