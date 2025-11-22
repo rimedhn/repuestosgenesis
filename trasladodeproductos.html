@@ -135,8 +135,24 @@
       .datos-negocio { font-size: 13px;}
       .titulo-traslado { font-size:15px;}
       .detalle-table { width:100%; margin-bottom:5px; table-layout:fixed; }
-      .detalle-table thead { display: none; }
+      .detalle-table thead tr th { 
+        font-size:10px; 
+        padding:2px 0px; 
+        border-left:none;
+        border-right:none;
+        background:#f3f3f3;
+      }
+      /* Menos espacio para No y Cantidad */
+      .detalle-table thead tr th.no-th, .detalle-table tbody td.no-td { width: 10%; }
+      .detalle-table thead tr th.cant-th, .detalle-table tbody td.cant-td { width: 16%; }
+      .detalle-table thead tr th.desc-th, .detalle-table tbody td.desc-td { width: 37%; }
+      .detalle-table thead tr th.precio-th, .detalle-table tbody td.precio-td { width: 18%; }
+      .detalle-table thead tr th.importe-th, .detalle-table tbody td.importe-td { width: 19%; }
+      .detalle-table thead tr th { 
+        text-align: left;
+      }
       .detalle-table tbody tr {display:table-row;}
+      /* Ajustes de celdas */
       .detalle-table td {
         font-size:11px;
         padding: 1px 2px;
@@ -147,8 +163,9 @@
         background:none !important;
         word-break: break-word;
         overflow-wrap: break-word;
+        text-align:left;
       }
-      .detalle-table .desc-row .desc-td {
+      .detalle-table .desc-td {
         font-weight: bold;
         font-size:12px;
         color:#222;
@@ -156,44 +173,16 @@
         padding-top:4px;
         background:none !important;
         border:none !important;
-        text-align:left;
         width:100%;
-      }
-      .detalle-table .data-row td {
-        padding: 1px 0px;
-        font-size:11px;
+        display:block;
+        text-align:left;
       }
       /* Baja el tamaño de fuente de Precio e Importe */
-      .detalle-table .data-row td.precio-td,
-      .detalle-table .data-row td.importe-td {
+      .detalle-table .precio-td,
+      .detalle-table .importe-td {
         font-size: 10px;
       }
-      /* Encabezados sobre datos en la data row */
-      .detalle-table .data-row td.header-cell {
-        font-weight: bold;
-        font-size:10px;
-        padding-bottom:0;
-        padding-top:0;
-        color:#666;
-        border:none !important;
-        background:none !important;
-        text-align:left;
-        width:26%;
-        display:block;
-      }
-      .detalle-table .data-row td {
-        vertical-align: top;
-        text-align: left;
-        width:24%;
-        display: inline-block;
-      }
-      .detalle-table .data-row {width:100%; display:block;}
-      .detalle-table .data-row td {box-sizing:border-box;}
-      /* Ajusta para que cada campo tenga buen ancho */
-      .detalle-table .data-row td.no-td {width:12%;}
-      .detalle-table .data-row td.cant-td {width:22%;}
-      .detalle-table .data-row td.precio-td {width:29%;}
-      .detalle-table .data-row td.importe-td {width:37%;}
+
       .resumen-final td { font-size:13px;}
       .footer-table td {font-size:13px;}
       .barcode-box { margin-top: 5px;}
@@ -234,11 +223,11 @@
     <table class="detalle-table" id="detalleTable">
       <thead>
         <tr>
-          <th>No</th>
+          <th class="no-th">No</th>
           <th class="desc-th">Descripción</th>
-          <th>Cantidad</th>
-          <th>Precio</th>
-          <th>Importe</th>
+          <th class="cant-th">Cantidad</th>
+          <th class="precio-th">Precio</th>
+          <th class="importe-th">Importe</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -297,66 +286,39 @@
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
       if (isTicketView()) {
-        // Cada producto: descripción ocupa una fila completa
+        // Alinea encabezados en la misma fila, menos espacio para No y Cantidad
         detalle.forEach((l, idx) => {
-          // Primera fila: solo descripción
-          var trDesc = document.createElement("tr");
-          trDesc.className = "desc-row";
+          var tr = document.createElement("tr");
+          // No
+          var tdNo = document.createElement("td");
+          tdNo.className = "no-td";
+          tdNo.textContent = idx + 1;
+          // Descripción ocupa ancho
           var tdDesc = document.createElement("td");
           tdDesc.className = "desc-td";
-          tdDesc.setAttribute("colspan", "5");
           tdDesc.textContent = l.Descripcion || "(Sin descripción)";
-          trDesc.appendChild(tdDesc);
-          tbody.appendChild(trDesc);
-
-          // Segunda fila: encabezado sobre valor para cada campo
-          var trDatos = document.createElement("tr");
-          trDatos.className = "data-row";
-          // No
-          var tdNoHeader = document.createElement("td");
-          tdNoHeader.className = "header-cell no-td";
-          tdNoHeader.textContent = "No";
-          var tdNoValue = document.createElement("td");
-          tdNoValue.className = "no-td";
-          tdNoValue.textContent = idx + 1;
-
           // Cantidad
-          var tdCantHeader = document.createElement("td");
-          tdCantHeader.className = "header-cell cant-td";
-          tdCantHeader.textContent = "Cantidad";
-          var tdCantValue = document.createElement("td");
-          tdCantValue.className = "cant-td";
-          tdCantValue.textContent = parseFloat(l.Cantidad) || 0;
-
+          var tdCantidad = document.createElement("td");
+          tdCantidad.className = "cant-td";
+          tdCantidad.textContent = parseFloat(l.Cantidad) || 0;
           // Precio
-          var tdPrecioHeader = document.createElement("td");
-          tdPrecioHeader.className = "header-cell precio-td";
-          tdPrecioHeader.textContent = "Precio";
-          var tdPrecioValue = document.createElement("td");
-          tdPrecioValue.className = "precio-td";
-          tdPrecioValue.textContent = formatCurrency(parseFloat(l.Precio) || 0);
-
+          var tdPrecio = document.createElement("td");
+          tdPrecio.className = "precio-td";
+          tdPrecio.textContent = formatCurrency(parseFloat(l.Precio) || 0);
           // Importe
           var cantidad = parseFloat(l.Cantidad) || 0;
           var precio = parseFloat(l.Precio) || 0;
-          var tdImporteHeader = document.createElement("td");
-          tdImporteHeader.className = "header-cell importe-td";
-          tdImporteHeader.textContent = "Importe";
-          var tdImporteValue = document.createElement("td");
-          tdImporteValue.className = "importe-td";
-          tdImporteValue.textContent = formatCurrency(cantidad * precio);
+          var tdImporte = document.createElement("td");
+          tdImporte.className = "importe-td";
+          tdImporte.textContent = formatCurrency(cantidad * precio);
 
-          // Añadir ordenadamente: NoHeader, NoValue, CantHeader, CantValue, PrecioHeader, PrecioValue, ImporteHeader, ImporteValue
-          trDatos.appendChild(tdNoHeader);
-          trDatos.appendChild(tdNoValue);
-          trDatos.appendChild(tdCantHeader);
-          trDatos.appendChild(tdCantValue);
-          trDatos.appendChild(tdPrecioHeader);
-          trDatos.appendChild(tdPrecioValue);
-          trDatos.appendChild(tdImporteHeader);
-          trDatos.appendChild(tdImporteValue);
+          tr.appendChild(tdNo);
+          tr.appendChild(tdDesc);
+          tr.appendChild(tdCantidad);
+          tr.appendChild(tdPrecio);
+          tr.appendChild(tdImporte);
 
-          tbody.appendChild(trDatos);
+          tbody.appendChild(tr);
         });
       } else {
         // Vista mayor: tabla tradicional
