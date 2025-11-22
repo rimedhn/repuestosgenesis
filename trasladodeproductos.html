@@ -13,7 +13,6 @@
       background: #fff;
     }
     .traslado-carta {
-      /* Por defecto ancho carta en pantalla y print */
       width: 8.2in;
       max-width: 8.2in;
       min-width: 210mm;
@@ -24,7 +23,6 @@
       border: 1px solid #eee;
       position: relative;
     }
-    /* Header carta formato (>80mm) */
     .encabezado-row {
       display: flex;
       align-items: center;
@@ -142,7 +140,6 @@
         font-size:11px; padding:2px 0px;
         border-left:none;border-right:none;
       }
-      /* Esconde encabezado descripción */
       .detalle-table thead tr th.desc-th {display:none;}
       .detalle-table tbody tr {display:table-row;}
       .detalle-table td {
@@ -153,16 +150,17 @@
         border-left:none;border-right:none;
         background:none !important;
       }
-      .detalle-table .desc-row td {
+      .detalle-table .desc-td {
         font-weight: bold;
-        width: 100%; border: none; font-size:12px; color:#222;background:none !important;
-        padding-bottom:0; text-align:left;
-        display: table-cell;
+        font-size:12px;
+        color:#222;
+        padding-bottom:0;
+        padding-top:4px;
+        background:none !important;
+        border:none !important;
+        text-align:left;
+        width:100%;
       }
-      .detalle-table .desc-row {display:table-row;}
-      .detalle-table .data-row td {padding-bottom:2px;}
-      .detalle-table .data-row { border-bottom: 1px dashed #ccc; }
-      .detalle-table .desc-th, .detalle-table .cell-desc {display:none;}
       .resumen-final td { font-size:13px;}
       .footer-table td {font-size:13px;}
       .barcode-box { margin-top: 5px;}
@@ -198,7 +196,6 @@
 </head>
 <body>
   <div class="traslado-carta">
-    <!-- Header layout: logo y datos en una fila para carta -->
     <div class="encabezado-row">
       <div class="encabezado-negocio">
         <img src="https://github.com/rimedhn/repuestosgenesis/blob/main/Repuestos%20Genesis%20Logo.jpg?raw=true" class="logo" alt="Logo"/>
@@ -222,7 +219,6 @@
       </thead>
       <tbody></tbody>
     </table>
-    <!-- Totales siempre tras el detalle -->
     <table class="resumen-final">
       <tr>
         <td><b>Importe total:</b></td>
@@ -233,7 +229,6 @@
         <td id="totalProductos"></td>
       </tr>
     </table>
-    <!-- Código de barras y datos finales -->
     <div class="barcode-box">
       <svg id="barcode"></svg>
     </div>
@@ -279,17 +274,14 @@
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
       if (isTicketView()) {
-        // En ticket, mostrar la descripción en la primera fila antes de los datos alineados
         detalle.forEach((l, idx) => {
           const cantidad = parseFloat(l.Cantidad) || 0;
           const precio = parseFloat(l.Precio) || 0;
           const importe = cantidad * precio;
-          // Fila descripción (debe verse antes de los datos, ocupando toda la fila)
+          // Usar dos filas: una con la descripción (colspan), otra con los datos alineados al header
           const trDesc = document.createElement("tr");
-          trDesc.className = "desc-row";
-          trDesc.innerHTML = `<td colspan="5"><span>${l.Descripcion || "(Sin descripción)"}</span></td>`;
+          trDesc.innerHTML = `<td class="desc-td" colspan="5">${l.Descripcion || "(Sin descripción)"}</td>`;
           tbody.appendChild(trDesc);
-          // Fila datos alineados con encabezados (menos descripción)
           const trDatos = document.createElement("tr");
           trDatos.className = "data-row";
           trDatos.innerHTML = `
@@ -297,7 +289,8 @@
             <td></td>
             <td>${cantidad}</td>
             <td>${formatCurrency(precio)}</td>
-            <td>${formatCurrency(importe)}</td>`;
+            <td>${formatCurrency(importe)}</td>
+          `;
           tbody.appendChild(trDatos);
         });
       } else {
@@ -334,7 +327,6 @@
           alert("No se encontró el traslado.");
           return;
         }
-        // Datos generales
         document.getElementById("datosGenerales").innerHTML = `
           <tr>
             <td><b>Origen:</b></td>
