@@ -22,10 +22,10 @@
       margin-bottom: 8px;
     }
     .encabezado-negocio .logo {
-      width: 70px;
-      height: 70px;
+      width: 110px;
+      height: 110px;
       object-fit: contain;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
       display: inline-block;
       border-radius: 14px;
       border: 2px solid #eee;
@@ -66,17 +66,16 @@
       font-weight: bold;
       font-size: 13px;
     }
-    /* Totales alineados a la derecha */
-    .resumen-derecha {
-      position: absolute;
-      right: 10px;
-      top: 190px;
-      text-align: right;
+    .resumen-final {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      margin-bottom: 3px;
       font-size: 16px;
     }
-    .resumen-derecha td {
+    .resumen-final td {
       border: none;
-      padding: 2px 6px;
+      padding: 3px 6px;
       font-size: 16px;
       text-align: right;
     }
@@ -88,7 +87,7 @@
     }
     .barcode-box {
       text-align: center;
-      margin-top: 16px;
+      margin-top: 12px;
     }
     .barcode-label { font-size: 13px; color: #333; letter-spacing: 1px; margin-bottom: 2px;}
     #barcode { max-width: 180px; width: 100%; height: 50px; object-fit: contain; background: #fff; }
@@ -114,26 +113,21 @@
         border-left: none;
         border-right: none;
       }
-      .detalle-table td.desc-fila { display: none; }
-      .detalle-table td.cell-desc { display: none; }
-      .detalle-table td.cell-label { width: 33%; font-weight: bold; }
-      .detalle-table td.cell-value { width: 67%; font-weight: normal; }
-      .resumen-derecha { 
-        position: static !important; 
-        width: 100%; 
-        margin-top: 6px !important; 
-        text-align: right; 
-        font-size: 13px;
-        right: 0; top: unset; 
-      }
-      .resumen-derecha td { font-size: 13px; }
+      .detalle-table .desc-row { font-weight: bold; width: 100%; border: none; font-size: 12px; display: table-row; background: none !important; color: #222;}
+      .detalle-table .data-row label { font-weight: bold; display: inline-block; width: 60px; }
+      .detalle-table .data-row td { padding-bottom: 2px;}
+      .detalle-table .data-row { border-bottom: 1px dashed #ccc; }
+      .detalle-table .desc-th, .detalle-table .cell-desc { display: none; }
+      .resumen-final td { font-size: 13px; }
+      .encabezado-negocio .logo { width: 90px; height: 90px; }
     }
     @media print {
       body, .traslado-carta { background: #fff !important; box-shadow: none; border: none; }
-      .encabezado-negocio .logo { width: 55px; height: 55px; }
+      .encabezado-negocio .logo { width: 90px; height: 90px; }
       .titulo-traslado { font-size: 16px; }
       .datos-generales td,
       .footer-table td { font-size: 11px; }
+      .resumen-final td { font-size: 13px;}
     }
   </style>
 </head>
@@ -161,14 +155,15 @@
       <tbody></tbody>
     </table>
 
-    <table class="resumen-derecha" id="resumenTable">
-      <tr>
-        <td><b>Total productos:</b></td>
-        <td id="totalProductos"></td>
-      </tr>
+    <!-- Resumen/totales van siempre al final del detalle -->
+    <table class="resumen-final">
       <tr>
         <td><b>Importe total:</b></td>
         <td id="importeTotal"></td>
+      </tr>
+      <tr>
+        <td><b>Total productos:</b></td>
+        <td id="totalProductos"></td>
       </tr>
     </table>
 
@@ -219,36 +214,31 @@
       const tbody = document.getElementById("detalleTable").querySelector("tbody");
       tbody.innerHTML = "";
       if (isTicketView()) {
-        // Head = No | Cantidad | Precio | Importe (sin Descripción)
+        // Encabezado: No | Cantidad | Precio | Importe (sin descripción)
         detalle.forEach((l, idx) => {
-          // No, Cantidad, Precio, Importe: cada dato en una fila con label
           const cantidad = parseFloat(l.Cantidad) || 0;
           const precio = parseFloat(l.Precio) || 0;
           const importe = cantidad * precio;
-          // Fila No
-          const trNo = document.createElement("tr");
-          trNo.innerHTML = `<td class="cell-label">No</td><td class="cell-value" colspan="4">${idx + 1}</td>`;
-          tbody.appendChild(trNo);
-          // Fila Cantidad
-          const trCantidad = document.createElement("tr");
-          trCantidad.innerHTML = `<td class="cell-label">Cantidad</td><td class="cell-value" colspan="4">${cantidad}</td>`;
-          tbody.appendChild(trCantidad);
-          // Fila Precio
-          const trPrecio = document.createElement("tr");
-          trPrecio.innerHTML = `<td class="cell-label">Precio</td><td class="cell-value" colspan="4">${formatCurrency(precio)}</td>`;
-          tbody.appendChild(trPrecio);
-          // Fila Importe
-          const trImporte = document.createElement("tr");
-          trImporte.innerHTML = `<td class="cell-label">Importe</td><td class="cell-value" colspan="4">${formatCurrency(importe)}</td>`;
-          tbody.appendChild(trImporte);
-          // Fila descripción aparte (sin encabezado)
+
+          // Fila descripción (solo desc, sin th)
           const trDesc = document.createElement("tr");
-          trDesc.innerHTML = `<td colspan="5" style="font-style:italic; color:#444;">${l.Descripcion || "(Sin descripción)"}</td>`;
+          trDesc.className = "desc-row";
+          trDesc.innerHTML = `<td colspan="5">${l.Descripcion || "(Sin descripción)"}</td>`;
           tbody.appendChild(trDesc);
+
+          // Fila datos alineados con encabezados
+          const trDatos = document.createElement("tr");
+          trDatos.className = "data-row";
+          trDatos.innerHTML = `
+            <td>${idx + 1}</td>
+            <td class="cell-desc"></td>
+            <td>${cantidad}</td>
+            <td>${formatCurrency(precio)}</td>
+            <td>${formatCurrency(importe)}</td>`;
+          tbody.appendChild(trDatos);
         });
       } else {
-        // Modo estándar
-        // Head = todo
+        // Modo estándar horizontal
         detalle.forEach((l, idx) => {
           const cantidad = parseFloat(l.Cantidad) || 0;
           const precio = parseFloat(l.Precio) || 0;
